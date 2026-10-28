@@ -270,7 +270,9 @@ docker compose exec web python manage.py seed_calidad_aire
 ```
 
 El comando crea los 4 dispositivos con sus gadgets y umbrales de alerta (luces
-piloto), y tres usuarios de ejemplo — `usuario1` (Operador), `usuario2`
+piloto), el dispositivo real `esp32-ccs811` (CO2 y TVOC de un sensor CCS811,
+ver [`firmware/esp32_ccs811`](firmware/esp32_ccs811/README.md); imprime su
+token para el `config.h` del firmware), y tres usuarios de ejemplo — `usuario1` (Operador), `usuario2`
 (Visualizador, solo lectura) y `usuario3` (desactivado, sin acceso) — e imprime
 sus contraseñas (`--password` fija una común). Es idempotente. Los tokens salen
 de `SIMULATOR_DEVICE_TOKENS` en `.env`, así el simulador publica de inmediato;
@@ -327,11 +329,22 @@ pasos en vez del mapa, pero igual puedes guardar coordenadas manualmente
 
 ## Identidad visual
 
-Los colores (`backend/monitoring/static/monitoring/css/dashboard.css`,
-variables `--brand-primary`/`--brand-accent`) son un **placeholder
-genérico** (grafito `#1F2933` + amarillo seguridad `#F2A900`) — no son
-necesariamente la marca real de Electrical Services Company Temuco. En
-cuanto tengas los hex definitivos, se reemplazan ahí.
+La identidad por defecto es la del logo **"Toxicidad del aire"**
+(`backend/monitoring/static/monitoring/img/`):
+
+- `logo-toxicidad.png` — logo completo, en la pantalla de login.
+- `logo-toxicidad-mark.png` — solo el óvalo, en la barra superior.
+- `favicon.png` — ícono de la pestaña del navegador.
+
+Los colores (`backend/monitoring/static/monitoring/css/dashboard.css`) salen
+del mismo logo: morado profundo `#201028` (texto), morado `#4A2C5A`
+(`--brand-primary`: botones y enlaces), morado medio `#684878`
+(`--series-1`: gráficas) y bronce `#96693F` (`--brand-accent`: borde y
+nombre en la barra superior; es el tono del texto del logo oscurecido para
+que se lea sobre fondo claro). El modo oscuro usa variantes más claras de
+los mismos tonos.
+
+Los logos de abajo, si se suben, reemplazan a estos por defecto.
 
 El **logo**, la **imagen de fondo** y el **ícono del mapa** son totalmente
 configurables desde el dashboard (sin tocar código):
@@ -356,6 +369,26 @@ Las imágenes se guardan en un volumen Docker (`media_data`, servido en
 respaldan automáticamente; si migras a otro servidor, copia también ese
 volumen. Límite de 5MB por imagen (formatos que entienda Pillow: JPG, PNG,
 WEBP, etc.).
+
+## Compartir el dashboard fuera de tu red
+
+Para que alguien fuera de tu red local entre al dashboard sin abrir puertos
+en el router, usa un túnel rápido de Cloudflare (gratis, sin cuenta):
+
+1. En `.env`, agrega `.trycloudflare.com` a `DJANGO_ALLOWED_HOSTS` y define
+   `DJANGO_CSRF_TRUSTED_ORIGINS=https://*.trycloudflare.com` (ver
+   `.env.example`), y recrea la web: `docker compose up -d web`.
+2. Descarga [`cloudflared`](https://github.com/cloudflare/cloudflared/releases)
+   y ejecuta:
+   ```
+   cloudflared tunnel --url http://localhost:8000
+   ```
+3. Comparte el link `https://<algo>.trycloudflare.com` que imprime.
+
+El link funciona mientras ese comando siga corriendo y cambia en cada
+arranque (para uno fijo se necesita una cuenta de Cloudflare y un dominio).
+Cualquiera con el link ve la pantalla de login: crea un usuario propio para
+la otra persona (ver "Roles y usuarios") en vez de compartir el tuyo.
 
 ## Migración a un servidor Linux
 

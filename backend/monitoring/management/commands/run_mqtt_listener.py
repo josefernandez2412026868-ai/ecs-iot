@@ -20,6 +20,8 @@ DEFAULT_UNITS = {
     "humedad": "%",
     "presion": "hPa",
     "gas": "kΩ",
+    "co2": "ppm",
+    "tvoc": "ppb",
 }
 
 

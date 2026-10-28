@@ -1,34 +1,36 @@
+/* Paleta tomada del logo "Toxicidad del aire": morado profundo #201028,
+   morado medio #684878, gris del óvalo #484848 y bronce del texto #a07450. */
 :root {
-  --surface-1: #fbfaff;
-  --page-plane: #efecf4;
-  --text-primary: #1f1b2b;
-  --text-secondary: #4f4a5e;
-  --text-muted: #7f798f;
-  --gridline: #e3dfec;
-  --baseline: #cbc5d8;
-  --border: rgba(60, 40, 100, 0.12);
-  --series-1: #8b6fc0;
+  --surface-1: #fcfafd;
+  --page-plane: #f1edf3;
+  --text-primary: #201028;
+  --text-secondary: #4a3a52;
+  --text-muted: #7d7085;
+  --gridline: #e6e0ea;
+  --baseline: #cdc3d3;
+  --border: rgba(32, 16, 40, 0.12);
+  --series-1: #684878;
   --status-good: #0ca30c;
   --status-critical: #d03b3b;
-  --meter-track: #e4dcf2;
-  --brand-primary: #5b4a78;
-  --brand-accent: #9b7fd1;
+  --meter-track: #e7dcec;
+  --brand-primary: #4a2c5a;
+  --brand-accent: #96693f;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --surface-1: #1f1c28;
-    --page-plane: #131119;
-    --text-primary: #f3f1f8;
-    --text-secondary: #c4bfd3;
-    --text-muted: #8d87a0;
-    --gridline: #302c3d;
-    --baseline: #3f3a50;
-    --border: rgba(220, 210, 255, 0.12);
-    --series-1: #a98be0;
-    --meter-track: #3b3157;
-    --brand-primary: #6b5a8e;
-    --brand-accent: #b49be8;
+    --surface-1: #1e1622;
+    --page-plane: #140e17;
+    --text-primary: #f4eff6;
+    --text-secondary: #c9bccf;
+    --text-muted: #918597;
+    --gridline: #31263a;
+    --baseline: #44374c;
+    --border: rgba(230, 210, 240, 0.12);
+    --series-1: #a684b8;
+    --meter-track: #3a2c44;
+    --brand-primary: #9070a6;
+    --brand-accent: #c39a72;
   }
 }
 
@@ -463,15 +465,15 @@ h1 {
 
 .login-logo-img {
   display: block;
-  max-width: 120px;
-  max-height: 64px;
+  max-width: 200px;
+  max-height: 200px;
   margin: 0 auto 16px auto;
 }
 
 /* --- Branding (logos, backgrounds, file inputs) --- */
 
 .brand-logo-img {
-  height: 24px;
+  height: 40px;
   width: auto;
   max-width: 140px;
   object-fit: contain;

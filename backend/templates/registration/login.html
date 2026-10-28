@@ -1,9 +1,12 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Entrar - {{ block.super }}{% endblock %}
 {% block content %}
 <div class="login-box">
     {% if effective_logo_url %}
         <img src="{{ effective_logo_url }}" alt="Logo" class="login-logo-img">
+    {% else %}
+        <img src="{% static 'monitoring/img/logo-toxicidad.png' %}" alt="Toxicidad del aire" class="login-logo-img">
     {% endif %}
     <h1>Iniciar sesión</h1>
     {% if form.errors %}

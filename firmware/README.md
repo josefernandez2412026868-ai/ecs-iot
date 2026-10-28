@@ -1,5 +1,11 @@
 # Firmware ESP32 — ECS IoT
 
+> Hay dos firmwares en esta carpeta:
+> - `esp32_ecs_iot/` (este README): sketch genérico de Arduino IDE con un sensor
+>   analógico y un comando de relé.
+> - [`esp32_ccs811/`](esp32_ccs811/README.md): proyecto PlatformIO para el
+>   sensor de calidad de aire CCS811 (CJMCU-811), en uso en el demo de calidad de aire.
+
 Sketch de ejemplo para un ESP32 que publica telemetría hacia la plataforma
 ECS IoT y opcionalmente recibe comandos (gadget Botón/Slider), siguiendo el
 "Contrato MQTT" documentado en el `README.md` raíz del proyecto.

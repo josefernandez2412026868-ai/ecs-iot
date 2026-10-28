@@ -1,4 +1,5 @@
-"""Datos demo del proyecto de calidad de aire: 3 ESP32 (CH4, CO2, PM10), el VDF del PLC y usuarios de ejemplo.
+"""Datos demo del proyecto de calidad de aire: 3 ESP32 (CH4, CO2, PM10), el VDF del PLC, el ESP32 real
+con sensor CCS811 y usuarios de ejemplo.
 
 Uso:
     docker compose exec web python manage.py seed_calidad_aire
@@ -12,6 +13,9 @@ lista para pegar en el .env.
 
 Los umbrales de alerta deben coincidir con los de simulator/simulate.py (y, con
 hardware real, con los que use Node-RED/PLC).
+
+Los dispositivos reales (REAL_DEVICES) no los alimenta el simulador: el comando
+imprime su token para pegarlo en el config.h del firmware (firmware/esp32_ccs811).
 """
 import os
 import secrets
@@ -37,6 +41,19 @@ DEVICES = [
         [
             ("frecuencia_hz", "Hz", Widget.TYPE_METER, 0, 50, None),
             ("sensores_en_alerta", "de 3", Widget.TYPE_NUMERIC, 0, 3, None),
+        ],
+    ),
+]
+
+# Hardware real (firmware/esp32_ccs811): mismo formato que DEVICES
+REAL_DEVICES = [
+    (
+        "esp32-ccs811",
+        "ESP32 CCS811 (real)",
+        "",
+        [
+            ("co2", "ppm", Widget.TYPE_LINE_CHART, 400, 3000, 1000),
+            ("tvoc", "ppb", Widget.TYPE_LINE_CHART, 0, 1200, 500),
         ],
     ),
 ]
@@ -94,7 +111,9 @@ class Command(BaseCommand):
 
         owner = users["usuario1"]
         device_tokens = []
-        for slug, name, location, sensors in DEVICES:
+        real_device_tokens = []
+        real_slugs = {slug for slug, *_ in REAL_DEVICES}
+        for slug, name, location, sensors in DEVICES + REAL_DEVICES:
             device, _ = Device.objects.get_or_create(
                 slug=slug, defaults={"owner": owner, "name": name, "tag": slug, "location": location}
             )
@@ -102,7 +121,10 @@ class Command(BaseCommand):
             if token and device.auth_token != token:
                 device.auth_token = token
                 device.save(update_fields=["auth_token"])
-            device_tokens.append(f"{slug}:{device.auth_token}")
+            if slug in real_slugs:
+                real_device_tokens.append((slug, device.auth_token))
+            else:
+                device_tokens.append(f"{slug}:{device.auth_token}")
 
             for variable, unit, widget_type, low, high, alert in sensors:
                 sensor, _ = Sensor.objects.get_or_create(device=device, variable=variable, defaults={"unit": unit})
@@ -127,3 +149,8 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING("Faltan tokens en el .env. Pega esta línea y reinicia el simulador:"))
             self.stdout.write(f"SIMULATOR_DEVICE_TOKENS={','.join(device_tokens)}")
             self.stdout.write("  docker compose up -d --force-recreate simulator")
+
+        for slug, token in real_device_tokens:
+            self.stdout.write("")
+            self.stdout.write(f"Token de {slug} (pégalo como DEVICE_TOKEN en el config.h del firmware):")
+            self.stdout.write(f"  {token}")
